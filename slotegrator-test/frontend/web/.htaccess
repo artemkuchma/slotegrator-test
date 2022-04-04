@@ -1,0 +1,17 @@
+#Redirect 301  http://193.104.254.90  http://193.104.254.90/charges
+#Redirect 301   http://193.104.254.90  http://193.104.254.90/charges
+<IfModule mod_rewrite.c>
+
+
+ RewriteEngine on
+ RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . index.php
+
+</IfModule>
+
+
+# в конфигах не забыть указать 'request' => [
+
+   #                                        'baseUrl' => '',
+         #                              ],

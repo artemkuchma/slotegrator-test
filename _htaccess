@@ -1,0 +1,83 @@
+
+#Redirect 301  /basic/web  http://193.104.254.90/basic/web/charges
+<IfModule mod_rewrite.c>
+  # RewriteEngine On
+   #RewriteCond %{REQUEST_URI} ^/$
+
+  # RewriteRule ^$ basic/web/ [L]
+ #  RewriteRule (.*) basic/web/$1 [L]
+
+
+
+
+
+
+
+
+  #  RewriteCond %{HTTP_HOST} ^(lk\.alfa-inet\.net/)$
+  #  RewriteCond %{REQUEST_URI} !^/basic/web
+   # RewriteRule (.*) basic/web/$1
+</IfModule>
+
+<IfModule mod_rewrite.c>
+   Options +FollowSymlinks
+    RewriteEngine On
+</IfModule>
+
+<IfModule mod_rewrite.c>
+RewriteCond %{REQUEST_URI} ^/admin
+RewriteRule ^admin\/?(.*) slotegrator-test/backend/web/$1
+
+# Добавляем другой запрос /frontend/web/$1
+RewriteCond %{REQUEST_URI} !^/(slotegrator-test/frontend/web|slotegrator-test/backend/web|admin)
+RewriteRule (.*) slotegrator-test/frontend/web/$1
+
+# Если frontend запрос
+RewriteCond %{REQUEST_URI} ^/slotegrator-test/frontend/web
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . slotegrator-test/frontend/web/index.php
+
+# Если backend запрос
+RewriteCond %{REQUEST_URI} ^/slotegrator-test/backend/web
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . slotegrator-test/backend/web/index.php
+
+
+</IfModule>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#RewriteCond %{REQUEST_URI} ^/admin
+#RewriteRule ^admin\/?(.*) advanced/backend/web/$1 [L]
+
+
+ #   RewriteCond %{REQUEST_URI} ^/.*
+  #  RewriteRule ^(.*)$ advanced/frontend/web/$1 [L]
+
+   # RewriteCond %{REQUEST_URI} !^/advanced/frontend/web/
+   # RewriteCond %{REQUEST_FILENAME} !-f [OR]
+   # RewriteCond %{REQUEST_FILENAME} !-d
+    #RewriteRule ^.*$ advanced/frontend/web/index.php
+
+
+     #RewriteCond %{REQUEST_URI} !^/advanced/backend/web/
+      #  RewriteCond %{REQUEST_FILENAME} !-f [OR]
+       # RewriteCond %{REQUEST_FILENAME} !-d
+        #RewriteRule ^.*$ advanced/backend/web/index.php
+
+
+
+
