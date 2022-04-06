@@ -135,6 +135,17 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * Checking if the user is an admin to access the backend of the site
+     *
+     * @param string $username
+     * @return bool
+     */
+    public static function isAdmin($username)
+    {
+        return in_array( $username, Yii::$app->params['admins'])? true : false;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getId()
@@ -210,4 +221,6 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
+
+
 }

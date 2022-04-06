@@ -57,6 +57,11 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
+            if(Yii::$app->request->baseUrl == Yii::$app->params['admin_url'] && !User::isAdmin($this->username)){
+
+                return false;
+            }
+
             return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
         }
         

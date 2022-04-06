@@ -1,0 +1,71 @@
+<?php
+
+namespace common\models;
+
+use Yii;
+
+/**
+ * This is the model class for table "prize_type".
+ *
+ * @property int $id
+ * @property string $name
+ * @property int|null $total
+ * @property int|null $interval_from
+ * @property int|null $interval_to
+ * @property float|null $coefficient_to_many
+ * @property int $created_at
+ * @property int $updated_at
+ *
+ * @property UserPrize[] $userPrizes
+ */
+class PrizeType extends \yii\db\ActiveRecord
+{
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return 'prize_type';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['name', 'created_at', 'updated_at'], 'required'],
+            [['total', 'interval_from', 'interval_to', 'created_at', 'updated_at'], 'integer'],
+            [['coefficient_to_many'], 'number'],
+            [['name'], 'string', 'max' => 255],
+            [['name'], 'unique'],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'name' => 'Name',
+            'total' => 'Total',
+            'interval_from' => 'Interval From',
+            'interval_to' => 'Interval To',
+            'coefficient_to_many' => 'Coefficient To Many',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+        ];
+    }
+
+    /**
+     * Gets query for [[UserPrizes]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserPrizes()
+    {
+        return $this->hasMany(UserPrize::className(), ['ptid' => 'id']);
+    }
+}
