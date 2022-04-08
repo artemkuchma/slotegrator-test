@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\HtmlPurifier;
 
 /**
  * This is the model class for table "users_info".
@@ -18,6 +19,27 @@ use Yii;
  */
 class UsersInfo extends \yii\db\ActiveRecord
 {
+    const SCENARIO_CREATE = 'Create';
+    const SCENARIO_UPDATE = 'Update';
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $this->address = HtmlPurifier::process($this->address);
+            $this->card_n = HtmlPurifier::process($this->card_n);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function beforeValidate()
+    {
+        if(self::SCENARIO_UPDATE){
+            $this->updated_at = time();
+        }
+        return parent::beforeValidate();
+    }
     /**
      * {@inheritdoc}
      */
@@ -32,11 +54,20 @@ class UsersInfo extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['created_at', 'updated_at'], 'default', 'value' => time(), 'on' => self::SCENARIO_CREATE],
             [['uid', 'created_at', 'updated_at'], 'required'],
             [['uid', 'created_at', 'updated_at'], 'integer'],
             [['card_n', 'address'], 'string', 'max' => 255],
             [['uid'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['uid' => 'id']],
         ];
+    }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_CREATE] = ['uid', 'card_n', 'created_at', 'updated_at', 'address'];
+        $scenarios[self::SCENARIO_UPDATE] = ['uid', 'card_n', 'created_at', 'updated_at', 'address'];
+        return $scenarios;
     }
 
     /**

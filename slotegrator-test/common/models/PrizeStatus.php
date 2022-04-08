@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\HtmlPurifier;
 
 /**
  * This is the model class for table "prize_status".
@@ -12,6 +13,19 @@ use Yii;
  */
 class PrizeStatus extends \yii\db\ActiveRecord
 {
+
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $this->name = HtmlPurifier::process($this->name);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * {@inheritdoc}
      */

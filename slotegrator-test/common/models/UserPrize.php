@@ -11,6 +11,8 @@ use Yii;
  * @property int $uid
  * @property int|null $ptid
  * @property int|null $bonus
+ * @property int|null $many
+ * @property int|null $status
  * @property int|null $item_id
  * @property int $created_at
  * @property int $updated_at
@@ -21,6 +23,17 @@ use Yii;
  */
 class UserPrize extends \yii\db\ActiveRecord
 {
+    const SCENARIO_CREATE = 'Create';
+    const SCENARIO_UPDATE = 'Update';
+
+
+    public function beforeValidate()
+    {
+        if(self::SCENARIO_UPDATE){
+            $this->updated_at = time();
+        }
+        return parent::beforeValidate();
+    }
     /**
      * {@inheritdoc}
      */
@@ -35,12 +48,21 @@ class UserPrize extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['uid', 'created_at', 'updated_at'], 'required'],
-            [['uid', 'ptid', 'bonus', 'item_id', 'created_at', 'updated_at'], 'integer'],
+            [['created_at', 'updated_at'], 'default', 'value' => time(), 'on' => self::SCENARIO_CREATE],
+            [['uid','status', 'created_at', 'updated_at'], 'required'],
+            [['uid', 'ptid', 'bonus','many', 'item_id', 'created_at', 'updated_at'], 'integer'],
             [['item_id'], 'exist', 'skipOnError' => true, 'targetClass' => Items::className(), 'targetAttribute' => ['item_id' => 'id']],
             [['ptid'], 'exist', 'skipOnError' => true, 'targetClass' => PrizeType::className(), 'targetAttribute' => ['ptid' => 'id']],
             [['uid'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['uid' => 'id']],
         ];
+    }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_CREATE] = ['uid', 'ptid', 'created_at', 'updated_at', 'bonus', 'item_id', 'many', 'status'];
+        $scenarios[self::SCENARIO_UPDATE] = ['uid', 'ptid', 'created_at', 'updated_at', 'bonus', 'item_id', 'many', 'status'];
+        return $scenarios;
     }
 
     /**
@@ -87,5 +109,10 @@ class UserPrize extends \yii\db\ActiveRecord
     public function getU()
     {
         return $this->hasOne(User::className(), ['id' => 'uid']);
+    }
+
+    public function getStatus()
+    {
+        return $this->hasOne(PrizeStatus::className(), ['id' => 'status']);
     }
 }

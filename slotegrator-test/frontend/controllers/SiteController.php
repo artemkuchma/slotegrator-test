@@ -2,6 +2,12 @@
 
 namespace frontend\controllers;
 
+use common\components\debugger\Debugger;
+use common\components\Game\Prizes;
+use common\models\GameForm;
+
+
+use common\models\UsersInfo;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -29,7 +35,7 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'signup','index'],
+                'only' => ['logout', 'signup','index','about','contact','user-account','user-data'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
@@ -37,7 +43,7 @@ class SiteController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout','index'],
+                        'actions' => ['logout','index','about','contact','user-account','user-data'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -75,8 +81,69 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+
+        $model = new GameForm();
+        if ($model->load(Yii::$app->request->post())  ) {
+            $result = $model->startGame();
+
+          //  Debugger::VarDamp($result);
+          //  Debugger::testDie();
+
+            if ($result === -1) {
+                Yii::$app->session->setFlash('info', 'Sorry, you didn\'t win a prize. Try again.');
+            } elseif (is_array($result)) {
+                return $this->redirect(['user-data','prize_type' => $result['prize_type_id']]);
+            } else {
+                Yii::$app->session->setFlash('error', 'Sorry, something went wrong. The draw is temporarily closed. Try later.');
+            }
+        }
+
+        return $this->render('index',[
+            'model' => $model
+        ]);
     }
+
+
+
+    public function actionUserData($prize_type)
+    {
+        $userInfo = UsersInfo::find()->where(['uid' => Yii::$app->user->id])->one();
+        if(!$userInfo){
+            $userInfo = new UsersInfo();
+            $userInfo->scenario = UsersInfo::SCENARIO_CREATE;
+        }else{
+            $userInfo->scenario = UsersInfo::SCENARIO_UPDATE;
+        }
+
+        $prize = Prizes::initById($prize_type);
+        $model = $prize->userContacts();
+        if ($model->load(Yii::$app->request->post()) && $model->saveContact($userInfo)) {
+
+                Yii::$app->session->setFlash('success', 'Контактные данные для отправки приза сохранены. Оператор свяжется с вами в ближайшее время для подтверждения деталей отправки приза.');
+
+
+            return $this->refresh();
+        }
+
+        return $this->render( $prize->getViewName(),[
+            'model' => $model,
+            'userInfo'=> $userInfo
+        ]);
+    }
+
+
+
+    public function actionUserAccount()
+    {
+
+
+
+        return $this->render( 'user-account',[
+            //'model' => $model,
+           // 'userInfo'=> $userInfo
+        ]);
+    }
+
 
     /**
      * Logs in a user.
@@ -136,15 +203,7 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * Displays about page.
-     *
-     * @return mixed
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
+
 
     /**
      * Signs user up.

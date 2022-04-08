@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\HtmlPurifier;
 
 /**
  * This is the model class for table "items".
@@ -17,6 +18,28 @@ use Yii;
  */
 class Items extends \yii\db\ActiveRecord
 {
+    const SCENARIO_CREATE = 'Create';
+    const SCENARIO_UPDATE = 'Update';
+
+
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $this->name = HtmlPurifier::process($this->name);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function beforeValidate()
+    {
+        if(self::SCENARIO_UPDATE){
+            $this->updated_at = time();
+        }
+        return parent::beforeValidate();
+    }
     /**
      * {@inheritdoc}
      */
@@ -31,10 +54,19 @@ class Items extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['created_at', 'updated_at'], 'default', 'value' => time(), 'on' => self::SCENARIO_CREATE],
+            [['name', 'created_at', 'updated_at'], 'required'],
             [['number', 'created_at', 'updated_at'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
             [['name'], 'string', 'max' => 255],
         ];
+    }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[self::SCENARIO_CREATE] = ['name', 'number', 'created_at', 'updated_at'];
+        $scenarios[self::SCENARIO_UPDATE] = ['name', 'number', 'created_at', 'updated_at'];;
+        return $scenarios;
     }
 
     /**
