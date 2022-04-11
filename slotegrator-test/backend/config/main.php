@@ -11,7 +11,7 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
-    'homeUrl' => '/admin',
+    'homeUrl' => '/admin/user-prize/index',
     'modules' => [],
     'components' => [
         'request' => [

@@ -2,8 +2,10 @@
 
 namespace backend\controllers;
 
+use common\components\Game\Prizes;
 use common\models\UserPrize;
-use common\models\UzerPrizeSearch;
+use common\models\UserPrizeSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -21,6 +23,17 @@ class UserPrizeController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::className(),
+                    'rules' => [
+
+                        [
+                            'actions' => ['view', 'index', 'create', 'update', 'delete', 'send-prize'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -38,7 +51,7 @@ class UserPrizeController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new UzerPrizeSearch();
+        $searchModel = new UserPrizeSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -115,6 +128,33 @@ class UserPrizeController extends Controller
 
         return $this->redirect(['index']);
     }
+
+
+
+
+
+
+
+
+    public function actionSendPrize($id)
+    {
+        $model = $this->findModel($id);
+
+        $prize = Prizes::initById($model->ptid);
+
+       $send_data = $prize->sendPrize($model);
+
+        \Yii::$app->session->setFlash('success', $send_data['text']. ' (TEST: '. json_encode($send_data['response']).')');
+
+        return $this->redirect(['index']);
+    }
+
+
+
+
+
+
+
 
     /**
      * Finds the UserPrize model based on its primary key value.

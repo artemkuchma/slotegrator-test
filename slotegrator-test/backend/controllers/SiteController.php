@@ -63,7 +63,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        return  $this->redirect(['user-prize/index']);//$this->render('index');
     }
 
     /**

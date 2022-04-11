@@ -72,4 +72,29 @@ class Bonus extends Prizes
         return true;
     }
 
+    public function cancelPrize(UserPrize $prize)
+    {
+            $prize->scenario = UserPrize::SCENARIO_UPDATE;
+            $prize->status = Prizes::PRIZE_STATUS_CANCELED;
+            $prize->update();
+    }
+
+    public function sendPrize(UserPrize $prize)
+    {
+        $prize->scenario = UserPrize::SCENARIO_UPDATE;
+        $prize->status = Prizes::PRIZE_STATUS_SENT;
+        $prize->update();
+
+        return [
+            'response' =>'',
+            'text' => 'Бонусный приз был зачислен на  бонусный счет пользователя ID - '.$prize->uid
+        ];
+
+    }
+
+    public function prizeConvert(UserPrize $prize)
+    {
+        return '';
+    }
+
 }

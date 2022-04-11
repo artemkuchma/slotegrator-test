@@ -40,12 +40,20 @@ class UserPrizeSearch extends UserPrize
     public function search($params)
     {
         $query = UserPrize::find();
+        //если НЕ админ то добавить фильтрацию по uid
+        if(!User::isAdminById(\Yii::$app->user->id)){
+            $query->where(['uid'=> \Yii::$app->user->id]);
+        }
+
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
+        $query->joinWith(['statusD']);
+        $query->joinWith(['item']);
 
         $this->load($params);
 
@@ -64,7 +72,7 @@ class UserPrizeSearch extends UserPrize
             'status' => $this->status,
 
         ]);
-        $query->andFilterWhere(['uid'=> \Yii::$app->user->id]);
+
 
         return $dataProvider;
     }

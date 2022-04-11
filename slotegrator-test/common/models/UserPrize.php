@@ -111,7 +111,7 @@ class UserPrize extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'uid']);
     }
 
-    public function getStatus()
+    public function getStatusD()
     {
         return $this->hasOne(PrizeStatus::className(), ['id' => 'status']);
     }

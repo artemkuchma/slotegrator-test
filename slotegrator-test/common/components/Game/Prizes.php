@@ -58,11 +58,23 @@ abstract class Prizes
 
     abstract public function getIntervalRepeatability();
 
+
     abstract public function changePrizeNumber($value);
+
 
     abstract public function savePrize($prize_array);
 
+
     abstract public function getViewName();
+
+
+    abstract public function cancelPrize(UserPrize $prize);
+
+
+    abstract public function sendPrize(UserPrize $prize);
+
+    abstract public function prizeConvert(UserPrize $prize);
+
 
     protected function getPrizeTypeData($id){
 

@@ -145,6 +145,11 @@ class User extends ActiveRecord implements IdentityInterface
         return in_array( $username, Yii::$app->params['admins'])? true : false;
     }
 
+    public static function isAdminById($id)
+    {
+        return in_array( $id, Yii::$app->params['admins_id'])? true : false;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -220,6 +225,11 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    public function getUserInfo()
+    {
+        return $this->hasOne(UsersInfo::className(), ['uid' => 'id']);
     }
 
 

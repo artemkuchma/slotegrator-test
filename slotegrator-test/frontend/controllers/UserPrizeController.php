@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\components\Game\Prizes;
 use common\models\UserPrize;
 use common\models\UserPrizeSearch;
 use yii\web\Controller;
@@ -24,11 +25,11 @@ class UserPrizeController extends Controller
             [
                 'access' => [
                     'class' => AccessControl::className(),
-                    'only' => ['index','view'],
+                    'only' => ['index','view','delete', 'bonus-convert'],
                     'rules' => [
 
                         [
-                            'actions' => ['index','view'],
+                            'actions' => ['index','view', 'delete', 'bonus-convert'],
                             'allow' => true,
                             'roles' => ['@'],
                         ],
@@ -37,7 +38,7 @@ class UserPrizeController extends Controller
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
-                        'delete' => ['POST'],
+
                     ],
                 ],
             ]
@@ -72,6 +73,45 @@ class UserPrizeController extends Controller
             'model' => $this->findModel($id),
         ]);
     }
+
+    /**
+     * Deletes an existing UserPrize model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param int $id ID
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionDelete($id)
+    {
+        $model = $this->findModel($id);
+
+        $prize = Prizes::initById($model->ptid);
+
+        $prize->cancelPrize($model);
+
+        return $this->redirect(['index']);
+    }
+
+
+
+
+
+    public function actionBonusConvert($id)
+    {
+        $model = $this->findModel($id);
+
+        $prize = Prizes::initById($model->ptid);
+
+        $prize->prizeConvert($model);
+
+        return $this->redirect(['index']);
+    }
+
+
+
+
+
+
 
 
 

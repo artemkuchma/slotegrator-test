@@ -6,6 +6,7 @@ use common\components\Game\Prizes;
 use common\models\Items;
 use common\models\PrizeType;
 use common\models\UserPrize;
+use common\models\UsersInfo;
 
 
 /**
@@ -63,6 +64,7 @@ class Item extends Prizes
             $prize->update();
             //уменьшение суммы единиц приза определенного типа в таблице items
             $item = Items::findOne($UserPrize->item_id);
+            $item->scenario = Items::SCENARIO_UPDATE;
             $item->number -=1;
             $transaction->commit();
 
@@ -114,5 +116,62 @@ class Item extends Prizes
         }
         return false;
     }
+
+    public function cancelPrize(UserPrize $prize)
+    {
+        $transaction = UserPrize::getDb()->beginTransaction();
+        try {
+
+            $prize->scenario = UserPrize::SCENARIO_UPDATE;
+            $prize->status = Prizes::PRIZE_STATUS_CANCELED;
+            $prize->update();
+
+            //уменьшение общей суммы призов типа item в таблице типов призов
+            $prizeType = PrizeType::findOne(Prizes::ITEM_TYPE_ID);
+            $prizeType->scenario = PrizeType::SCENARIO_UPDATE;
+            $prizeType->total +=1;
+            $prizeType->update();
+            //уменьшение суммы единиц приза определенного типа в таблице items
+            $item = Items::findOne($prize->item_id);
+            $item->scenario = Items::SCENARIO_UPDATE;
+            $item->number +=1;
+            $item->update();
+
+            $transaction->commit();
+
+            return true;
+
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+    }
+
+    public function sendPrize(UserPrize $prize)
+    {
+        $userData = UsersInfo::find()
+            ->where(['uid' => $prize->uid])
+            ->one();
+
+        $prize->scenario = UserPrize::SCENARIO_UPDATE;
+        $prize->status = Prizes::PRIZE_STATUS_SENT;
+        $prize->update();
+
+
+        return [
+            'response' =>'',
+            'text' => 'Приз был отправлен по адресу: '.$userData->address
+        ];
+
+    }
+
+    public function prizeConvert(UserPrize $prize)
+    {
+        return 'Not available';
+    }
+
 
 }
