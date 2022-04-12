@@ -10,6 +10,8 @@
 <p>Through the frontend registration form, create a user with the name - "slotegrator-admin". This will be a user with admin rights. Or create any other user or users and add their logins to the file: /common/config/params.php These users will have admin rights.</p>
 <code> 'admins' => ['slotegrator-admin'],
           'admins_id' => [1 ],</code>
+
+          <p>rename _htaccess file to .htaccess</p>
 <p>
 Admin panel login: domain_name/admin
 </p>
