@@ -75,7 +75,7 @@ class UserPrizeController extends Controller
     }
 
     /**
-     * Deletes an existing UserPrize model.
+     *
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -93,9 +93,11 @@ class UserPrizeController extends Controller
     }
 
 
-
-
-
+    /**
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
     public function actionBonusConvert($id)
     {
         $model = $this->findModel($id);
@@ -104,7 +106,7 @@ class UserPrizeController extends Controller
 
         $prize->prizeConvert($model);
 
-        return $this->redirect(['index']);
+        return $this->redirect(['site/user-data','prize_type' => Prizes::MANY_TYPE_ID]);
     }
 
 

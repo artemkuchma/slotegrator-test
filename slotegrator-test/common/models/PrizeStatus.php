@@ -46,7 +46,7 @@ class PrizeStatus extends \yii\db\ActiveRecord
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function attributeLabels()
     {

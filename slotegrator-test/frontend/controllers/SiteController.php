@@ -2,7 +2,7 @@
 
 namespace frontend\controllers;
 
-use common\components\debugger\Debugger;
+
 use common\components\Game\Prizes;
 use common\models\GameForm;
 
@@ -104,7 +104,11 @@ class SiteController extends Controller
     }
 
 
-
+    /**
+     * @param $prize_type
+     * @return string|\yii\web\Response
+     * @throws \yii\web\NotFoundHttpException
+     */
     public function actionUserData($prize_type)
     {
         $userInfo = UsersInfo::find()->where(['uid' => Yii::$app->user->id])->one();
@@ -122,7 +126,7 @@ class SiteController extends Controller
                 Yii::$app->session->setFlash('success', 'Контактные данные для отправки приза сохранены. Оператор свяжется с вами в ближайшее время для подтверждения деталей отправки приза.');
 
 
-            return $this->refresh();
+            return $this->redirect(['user-prize/index']);
         }
 
         return $this->render( $prize->getViewName(),[
@@ -132,15 +136,13 @@ class SiteController extends Controller
     }
 
 
-
+    /**
+     * @return string
+     */
     public function actionUserAccount()
     {
 
-
-
         return $this->render( 'user-account',[
-            //'model' => $model,
-           // 'userInfo'=> $userInfo
         ]);
     }
 

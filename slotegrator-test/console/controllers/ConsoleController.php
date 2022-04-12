@@ -21,7 +21,12 @@ use yii\console\ExitCode;
 class ConsoleController extends \yii\console\Controller
 {
 
-
+    /**
+     * Console command for automatic crediting of cash prizes in the amount of n
+     * Command:php yii console/bank n
+     * @param $n
+     * @return int
+     */
     public function actionBank($n)
     {
 

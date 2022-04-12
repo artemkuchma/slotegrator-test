@@ -31,7 +31,10 @@ class ManyContactForm extends Model
     }
 
     /**
-     * {@inheritdoc}
+     * @param UsersInfo $userInfo
+     * @return bool
+     * @throws \Exception
+     * @throws \Throwable
      */
     public function saveContact(UsersInfo $userInfo)
     {

@@ -15,12 +15,15 @@ Admin panel login: domain_name/admin
 </p>
 
 <h3>Usage</h3>
-<p>In the admin panel, you can view all the prizes won and confirm (make) their sending. For material prizes, this is a formal sending to the address, for cash prizes, it is credited to the account through the bank's app, and for bonus prizes, it is credited to the bonus account. You can also filter data for all fields.</p>
+<p>In the admin panel, you can view all the prizes won and confirm (make) their sending.
+For material prizes, this is a formal sending to the address, for cash prizes, it is credited to the account through the bank's app, and for bonus prizes, it is credited to the bonus account.
+ You can also filter data for all fields.</p>
 
 <p>using the console command, you can transfer money to the users account with a package of prizes:</p>
 <code>php yii console/bank n</code>
 <p>n - the number of prizes to be credited</p>
-<p>The prize for winnings is in the - selected state. After entering the delivery data by the user, the status changes to confirmed. The operator in the admin panel, by clicking on the button - Send, transfers the prize to the state - sent. The user can see the list and status of his prizes in his personal account, and can also refuse the prize (until the time of sending)</p>
+<p>The prize for winnings is in the - selected state. After entering the delivery data by the user, the status changes to confirmed. The operator in the admin panel, by clicking on the button - Send, transfers the prize to the state - sent. The user can see the list and status of his prizes in his personal account, and can also refuse the prize (until the time of sending).
+The user in his account can convert the bonus prize into many prize</p>
 
 <p>You can set the frequency of wins in the configuration file: /common/config/params.php</p>
 <code> 'gameEmptyValueNumber' => 200,

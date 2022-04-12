@@ -130,12 +130,11 @@ class UserPrizeController extends Controller
     }
 
 
-
-
-
-
-
-
+    /**
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
     public function actionSendPrize($id)
     {
         $model = $this->findModel($id);

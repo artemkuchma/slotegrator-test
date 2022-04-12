@@ -2,7 +2,7 @@
 
 namespace common\components\Game\Prizes;
 
-use common\components\debugger\Debugger;
+
 use common\components\Game\Prizes;
 use common\models\PrizeType;
 use common\models\User;
@@ -13,15 +13,16 @@ use common\components\TestBank\TestBank;
 
 
 /**
- * Created by PhpStorm.
- * User: artem
- * Date: 06.04.22
- * Time: 16:37
+ * Class Many
+ * @package common\components\Game\Prizes
  */
 class Many extends Prizes
 {
 
-
+    /**
+     * Checking the availability many prizes before the game
+     * @return array|bool
+     */
     public function checkBeforeGame()
     {
         $prizeTypeData = $this->getPrizeTypeData(Many::MANY_TYPE_ID);
@@ -36,6 +37,10 @@ class Many extends Prizes
     }
 
     //интервал в котором рандомно выбирается количество раз повторения приза в массиве
+    /**
+     * Getting the interval of acceptable values for prizes
+     * @return array
+     */
     public function getIntervalRepeatability()
     {
         return [
@@ -44,6 +49,10 @@ class Many extends Prizes
         ];
     }
 
+    /**
+     * Saving the user's contact details for sending the prize
+     * @return mixed
+     */
     public function userContacts()
     {
 
@@ -51,11 +60,22 @@ class Many extends Prizes
         return new $model();
     }
 
+    /**
+     * Getting the view name
+     * @return string
+     */
     public function getViewName()
     {
         return 'user-data-many';
     }
 
+    /**
+     * Saving Prize Data
+     * @param $prize_array
+     * @return bool
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function savePrize($prize_array)
     {
         $transaction = UserPrize::getDb()->beginTransaction();
@@ -86,6 +106,11 @@ class Many extends Prizes
 
     }
 
+    /**
+     * Changing the total number of prizes of a certain type
+     * @param $value
+     * @return bool
+     */
     public function changePrizeNumber($value)
     {
         $prize = PrizeType::findOne(Prizes::MANY_TYPE_ID);
@@ -97,6 +122,13 @@ class Many extends Prizes
         return false;
     }
 
+    /**
+     * Prize Cancellation
+     * @param UserPrize $prize
+     * @return bool
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function cancelPrize(UserPrize $prize)
     {
             $transaction = UserPrize::getDb()->beginTransaction();
@@ -111,7 +143,6 @@ class Many extends Prizes
                 $prize_type->total += $prize->many;
                 $prize_type->update();
 
-
                 $transaction->commit();
 
                 return true;
@@ -125,6 +156,13 @@ class Many extends Prizes
             }
     }
 
+    /**
+     * Sending a Prize
+     * @param UserPrize $prize
+     * @return array
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function sendPrize(UserPrize $prize)
     {
         $userData = UsersInfo::find()
@@ -144,6 +182,11 @@ class Many extends Prizes
 
     }
 
+    /**
+     * Prize conversion
+     * @param UserPrize $prize
+     * @return string
+     */
     public function prizeConvert(UserPrize $prize)
     {
         return 'Not available';

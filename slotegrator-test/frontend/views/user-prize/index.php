@@ -59,7 +59,7 @@ $this->title = 'Ваши призы';
                 'urlCreator' => function ($action, \common\models\UserPrize $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  },
-                 'template' => '{delete}{confirm}',
+                 'template' => '{delete}{confirm}{convert}',
 
                 'buttons' => [
                     'delete' => function ($url, $model, $key) {
@@ -70,11 +70,17 @@ $this->title = 'Ваши призы';
                 },
                 'confirm' => function ($url, $model, $key) {
                     if($model->status == \common\components\Game\Prizes::PRIZE_STATUS_SELECTED ){
-                        $text = $model->ptid == 2 ? 'Подтвердить приз' : 'Добавить данные для отправки';
+                        $text = $model->ptid == \common\components\Game\Prizes::BONUS_TYPE_ID ? 'Подтвердить приз' : 'Добавить данные для отправки';
                         return '<a class="btn btn-success" href="/site/user-data?prize_type='.$model->ptid.'">'.$text.'</a>';
                     }
                     return null;
-                },]
+                },
+                    'convert' => function ($url, $model, $key) {
+                        if($model->ptid == \common\components\Game\Prizes::BONUS_TYPE_ID &&  $model->status != \common\components\Game\Prizes::PRIZE_STATUS_SENT){
+                            return '<a class="btn btn-success" href="/user-prize/bonus-convert?id='.$model->id.'">Конвертировать в деньги</a>';
+                        }
+                        return null;
+                    },]
             ],
         ],
     ]); ?>

@@ -2,7 +2,7 @@
 
 namespace backend\controllers;
 
-use common\components\debugger\Debugger;
+
 use common\components\Game\Prizes;
 use common\models\Items;
 use common\models\ItemsSearch;

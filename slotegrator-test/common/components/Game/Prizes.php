@@ -1,7 +1,7 @@
 <?php
 
 namespace common\components\Game;
-use common\components\debugger\Debugger;
+
 use common\models\PrizeType;
 use common\models\UserPrize;
 use yii\web\NotFoundHttpException;
@@ -29,7 +29,10 @@ abstract class Prizes
         self::ITEM_TYPE_ID => self::PRYZE_CLASS_ITEM
     ];
 
-
+    /**
+     * @param $className
+     * @return mixed
+     */
     public static function init($className){
 
 
@@ -39,6 +42,11 @@ abstract class Prizes
 
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     * @throws NotFoundHttpException
+     */
     public static function initById($id){
 
         if(isset(self::$className[$id])){
@@ -50,32 +58,64 @@ abstract class Prizes
 
     }
 
+    /**
+     * Checking the availability of all types of prizes before the game
+     * @return mixed
+     */
     abstract public function checkBeforeGame();
 
-
+    /**
+     * Saving the user's contact details for sending the prize
+     * @return mixed
+     */
     abstract public function userContacts();
 
-
+    /**
+     * Getting the interval of acceptable values for prizes
+     * @return mixed
+     */
     abstract public function getIntervalRepeatability();
 
-
+    /**
+     * Changing the total number of prizes of a certain type
+     * @return mixed
+     */
     abstract public function changePrizeNumber($value);
 
-
+    /**
+     * Saving Prize Data
+     * @return mixed
+     */
     abstract public function savePrize($prize_array);
 
-
+    /**
+     * Getting the view name
+     * @return mixed
+     */
     abstract public function getViewName();
 
-
+    /**
+     * Prize Cancellation
+     * @return mixed
+     */
     abstract public function cancelPrize(UserPrize $prize);
 
-
+    /**
+     * Sending a Prize
+     * @return mixed
+     */
     abstract public function sendPrize(UserPrize $prize);
 
+    /**
+     * Prize conversion
+     * @return mixed
+     */
     abstract public function prizeConvert(UserPrize $prize);
 
-
+    /**
+     * Prize type data
+     * @return mixed
+     */
     protected function getPrizeTypeData($id){
 
         return PrizeType::findOne($id);

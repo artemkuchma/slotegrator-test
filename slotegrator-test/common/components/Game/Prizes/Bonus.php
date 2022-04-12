@@ -2,22 +2,23 @@
 
 namespace common\components\Game\Prizes;
 
-use common\components\debugger\Debugger;
+
 use common\components\Game\Prizes;
 use common\models\PrizeType;
 use common\models\UserPrize;
 
 
 /**
- * Created by PhpStorm.
- * User: artem
- * Date: 06.04.22
- * Time: 16:37
+ * Class Bonus
+ * @package common\components\Game\Prizes
  */
 class Bonus extends Prizes
 {
 
-
+    /**
+     * Checking the availability bonus prizes before the game
+     * @return array
+     */
     public function checkBeforeGame()
     {
         $prizeTypeData = $this->getPrizeTypeData(Bonus::BONUS_TYPE_ID);
@@ -29,6 +30,10 @@ class Bonus extends Prizes
         ];
     }
 
+    /**
+     * Getting the interval of acceptable values for prizes
+     * @return array
+     */
     public function getIntervalRepeatability()
     {
         return [
@@ -37,6 +42,10 @@ class Bonus extends Prizes
         ];
     }
 
+    /**
+     * Saving the user's contact details for sending the prize
+     * @return mixed
+     */
     public function userContacts()
     {
 
@@ -44,11 +53,20 @@ class Bonus extends Prizes
         return new $model();
     }
 
+    /**
+     * Getting the view name
+     * @return string
+     */
     public function getViewName()
     {
         return 'user-data-bonus';
     }
 
+    /**
+     * Saving Prize Data
+     * @param $prize_array
+     * @return bool
+     */
     public function savePrize($prize_array)
     {
 
@@ -62,16 +80,24 @@ class Bonus extends Prizes
             return true;
         }
         return false;
-
-
     }
 
-
+    /**
+     * Changing the total number of bonus prizes
+     * @param $value
+     * @return bool
+     */
     public function changePrizeNumber($value)
     {
         return true;
     }
 
+    /**
+     * Prize Cancellation
+     * @param UserPrize $prize
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function cancelPrize(UserPrize $prize)
     {
             $prize->scenario = UserPrize::SCENARIO_UPDATE;
@@ -79,6 +105,13 @@ class Bonus extends Prizes
             $prize->update();
     }
 
+    /**
+     * Sending a Prize
+     * @param UserPrize $prize
+     * @return array
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function sendPrize(UserPrize $prize)
     {
         $prize->scenario = UserPrize::SCENARIO_UPDATE;
@@ -92,9 +125,44 @@ class Bonus extends Prizes
 
     }
 
+    /**
+     * Prize conversion
+     * @param UserPrize $prize
+     * @return bool
+     * @throws \Exception
+     * @throws \Throwable
+     */
     public function prizeConvert(UserPrize $prize)
     {
-        return '';
-    }
+        $transaction = UserPrize::getDb()->beginTransaction();
+        try {
 
+            $prizeTypeBonus = PrizeType::findOne(Prizes::BONUS_TYPE_ID);
+
+        $prize->scenario = UserPrize::SCENARIO_UPDATE;
+        $prize->ptid = Prizes::MANY_TYPE_ID;
+        $prize->many =  (int)($prize->bonus * $prizeTypeBonus->coefficient_to_many);
+        $prize->bonus = null;
+        $prize->status = Prizes::PRIZE_STATUS_SELECTED;
+        $prize->update();
+
+
+        $prizeTypeMany = PrizeType::findOne(Prizes::MANY_TYPE_ID);
+        $prizeTypeMany->scenario = PrizeType::SCENARIO_UPDATE;
+        $prizeTypeMany->total += $prize->many;
+        $prizeTypeMany->update();
+
+            $transaction->commit();
+
+            return true;
+
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+        } catch (\Throwable $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+
+    }
 }

@@ -2,7 +2,10 @@
 
 namespace common\components\TestBank;
 
-
+/**
+ * Class TestBank
+ * @package common\components\TestBank
+ */
 class TestBank
 {
     protected $publicKey = 'F0BMCt0aGdYfnOvethZTfN46LiVbqm*EJ';
@@ -29,6 +32,11 @@ class TestBank
 
     }
 
+    /**
+     * @param $cardData
+     * @param $amount
+     * @return mixed
+     */
     public function sendMany($cardData, $amount)
     {
         $time = time();

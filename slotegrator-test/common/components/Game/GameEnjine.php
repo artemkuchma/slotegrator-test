@@ -7,14 +7,25 @@
 namespace common\components\Game;
 
 
-use common\components\debugger\Debugger;
+
 use common\models\PrizeType;
 
+/**
+ * Class GameEnjine
+ * @package common\components\Game
+ */
 class GameEnjine
 {
+
     public $mainArray;
 
-
+    /**
+     * Prize draw mechanism. Based on creating an array with empty values and values with prize data.
+     * The drawing of prizes consists in a random selection of a random value from the generated array
+     * @param $n_empty
+     * @return bool
+     * @throws \yii\web\NotFoundHttpException
+     */
     public function game($n_empty)
     {
         $this->mainArray = [];
@@ -24,19 +35,12 @@ class GameEnjine
         $this->setPrizeForGame(Prizes::PRYZE_CLASS_ITEM);
 
 
-        $empty_array = array_fill(0, $n_empty, -1); //range(0,$n_empty);
+        $empty_array = array_fill(0, $n_empty, -1);
         $this->mainArray = array_merge($this->mainArray, $empty_array);
 
         shuffle($this->mainArray);
 
-     //   Debugger::PrintR($this->mainArray);
-      //  Debugger::testDie();
-
         $result_number = array_rand($this->mainArray);
-//Debugger::EhoBr('t');
-      //  Debugger::PrintR($this->mainArray[$result_number]);
-      //  Debugger::EhoBr($this->mainArray[$result_number]);
-
 
        if(isset($this->mainArray[$result_number])){
            if(is_array($this->mainArray[$result_number])){
@@ -52,6 +56,10 @@ class GameEnjine
 
     }
 
+    /**
+     * Randomly setting a prize type of a certain type for the game
+     * @param $prizeType
+     */
     protected function setPrizeForGame($prizeType){
 
         $prize = Prizes::init($prizeType);
